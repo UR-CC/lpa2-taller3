@@ -125,13 +125,15 @@ lpa2-taller3
 
 2. Utilizando [DBeaver](https://dbeaver.io/), adiciona 5 usuarios y 10 canciones, directo a las tablas.
 
-3. Busca todos los comentarios `# TODO` y `# FIXME`, realiza los ajustes necesarios, y ejecuta un `commit` por cada uno. Usa Pydantic para la validación de datos.
+3. Adicionar `pre-commit` y `workflow` de GitHub Actions para **ruff** *linter* y *formatter*, y para **pytest**.
 
-4. Prueba el funcionamiento del API, desde la documentación *Swagger UI* o *ReDoc*.
+4. Busca todos los comentarios `# TODO` y `# FIXME`, realiza los ajustes necesarios, y ejecuta un `commit` por cada uno. Usa Pydantic para la validación de datos.
 
-5. Desarrolla las pruebas automatizadas para verificar el funcionamiento correcto de la API.
+5. Prueba el funcionamiento del API, desde la documentación *Swagger UI* o *ReDoc*.
 
-6. Implementar dos (2) de las sugerencias que se presentan a continuación.
+6. Desarrolla las pruebas automatizadas para verificar el funcionamiento correcto de la API.
+
+7. Implementar dos (2) de las sugerencias que se presentan a continuación.
 
 ## Sugerencias de Mejora
 
