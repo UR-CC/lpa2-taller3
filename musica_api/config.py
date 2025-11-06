@@ -1,58 +1,110 @@
 """
-Módulo de configuración de la aplicación.
-Define las diferentes configuraciones para entornos de desarrollo, pruebas y producción.
+Configuración de la aplicación.
+Maneja diferentes entornos: desarrollo, pruebas y producción.
 """
-import os
-from dotenv import load_dotenv
 
-# Cargar variables de entorno desde archivo .env si existe
-load_dotenv()
+from pydantic_settings import BaseSettings
+from typing import Literal
 
-class Config:
-    """Configuración base para la aplicación."""
+
+class Settings(BaseSettings):
+    """
+    Configuración de la aplicación usando Pydantic Settings.
+    Lee las variables de entorno desde el archivo .env
+    """
+    
+    # Configuración básica de la aplicación
+    app_name: str = "API de Música"
+    app_version: str = "1.0.0"
+    
+    # Configuración del entorno
+    # environment: Literal["development", "testing", "production"] = "development"
+    environment: str = "development"
+    
     # Configuración de la base de datos
-    # FIXME: la ubicación de la base de datos no funciona
-    SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI', 'sqlite://Users/Admin/Public/musica.db')
-    SQLALCHEMY_TRACK_MODIFICATIONS = os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS', 'False').lower() == 'true'
+    # Para SQLite: sqlite:///./musica.db
+    # Para PostgreSQL: postgresql://user:password@localhost/dbname
+    database_url: str = "sqlite:///./musica.db"
     
-    # Configuración de la API
-    API_TITLE = os.getenv('API_TITLE', 'API de Música')
-    API_VERSION = os.getenv('API_VERSION', '1.0')
+    # Configuración del servidor
+    host: str = "0.0.0.0"
+    port: int = 8000
+    debug: bool = True
     
-    # Otras configuraciones generales
-    SECRET_KEY = os.getenv('SECRET_KEY', 'clave-secreta-predeterminada')
+    # Configuración de CORS
+    # En desarrollo puedes usar ["*"], en producción especifica los orígenes permitidos
+    cors_origins: list[str] = ["*"]
+    
+    # TODO: Configuración de seguridad (para futuras mejoras)
+    # secret_key: str = "your-secret-key-here"  # Cambiar en producción
+    # algorithm: str = "HS256"
+    # access_token_expire_minutes: int = 30
+    
+    # TODO: Configuración de logging
+    # log_level: str = "INFO"
+    
+    class Config:
+        """
+        Configuración de Pydantic Settings.
+        """
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+        case_sensitive = False
+        
+        # TODO: Opcional - Agregar validación personalizada
+        # @validator("database_url")
+        # def validate_database_url(cls, v):
+        #     if not v:
+        #         raise ValueError("DATABASE_URL no puede estar vacío")
+        #     return v
 
-class DevelopmentConfig(Config):
-    """Configuración para entorno de desarrollo."""
-    DEBUG = True
-    
-class TestingConfig(Config):
-    """Configuración para entorno de pruebas."""
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///musica_test.db'
-    
-class ProductionConfig(Config):
-    """Configuración para entorno de producción."""
-    DEBUG = False
-    # En producción, asegurarse de tener una clave secreta fuerte
-    SECRET_KEY = os.getenv('SECRET_KEY')
-    
-# Mapeo de configuraciones por entorno
-config_by_name = {
-    'development': DevelopmentConfig,
-    'testing': TestingConfig,
-    'production': ProductionConfig,
-    'default': DevelopmentConfig
-}
 
-# Obtener configuración según el entorno
-def get_config():
+# Crear una instancia global de Settings
+settings = Settings()
+
+
+# Crear diferentes configuraciones para cada entorno
+class DevelopmentSettings(Settings):
+    """Configuración para el entorno de desarrollo."""
+    debug: bool = True
+    # TODO: Agregar configuraciones específicas de desarrollo
+
+
+class TestingSettings(Settings):
+    """Configuración para el entorno de pruebas."""
+    # Usar una base de datos diferente para pruebas
+    database_url: str = "sqlite:///./test_musica.db"
+    # TODO: Agregar configuraciones específicas de pruebas
+
+
+class ProductionSettings(Settings):
+    """Configuración para el entorno de producción."""
+    debug: bool = False
+    # TODO: Agregar configuraciones específicas de producción
+    # TODO: Cambiar a una base de datos más robusta (PostgreSQL, MySQL)
+    # database_url: str = "postgresql://user:password@localhost/musica_prod"
+
+
+# Función para obtener la configuración según el entorno
+def get_settings() -> Settings:
     """
-    Obtiene la configuración según el entorno especificado en las variables de entorno.
+    Retorna la configuración apropiada según el entorno.
+    """
+    env = settings.environment.lower()
     
-    Returns:
-        object: Clase de configuración según el entorno.
-    """
-    env = os.getenv('FLASK_ENV', 'development')
-    return config_by_name.get(env, config_by_name['default'])
+    if env == "testing":
+        return TestingSettings()
+    elif env == "production":
+        return ProductionSettings()
+    else:
+        return DevelopmentSettings()
+
+
+# TODO: Opcional - Agregar validación de configuración al inicio
+# def validate_settings():
+#     """Valida que todas las configuraciones necesarias estén presentes."""
+#     required_settings = ["database_url", "app_name"]
+#     for setting in required_settings:
+#         if not getattr(settings, setting, None):
+#             raise ValueError(f"Configuración requerida no encontrada: {setting}")
 

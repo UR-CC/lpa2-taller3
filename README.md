@@ -1,6 +1,6 @@
 # API de Música
 
-Una [API RESTful](https://aws.amazon.com/es/what-is/restful-api/) para gestionar usuarios, canciones y relaciones de favoritos. Desarrollada con [Flask](https://flask.palletsprojects.com/en/stable/), [Flask-RESTX](https://flask-restx.readthedocs.io/en/latest/), [Flask-SQLAlchemy](https://flask-sqlalchemy.readthedocs.io/en/stable/) y [SQLAlchemy](https://www.sqlalchemy.org/).
+Una [API RESTful](https://aws.amazon.com/es/what-is/restful-api/) para gestionar usuarios, canciones y favoritos. Desarrollada con [FastAPI](https://fastapi.tiangolo.com/), [SQLModel](https://sqlmodel.tiangolo.com/) y [Pydantic](https://docs.pydantic.dev/).
 
 ## Descripción
 
@@ -18,16 +18,11 @@ lpa2-taller3
 ├──  README.md            # Este archivo, documentación completa del proyecto
 ├──  .env                 # Variables de entorno (desarrollo, pruebas, producción)
 ├──  .gitignore           # Archivos y directorios a ignorar por Git
-├──  app.py               # Script principal para ejecutar la aplicación
-├──  instance
-│   └──  musica.db        # Base de Datos
+├──  main.py              # Script principal para ejecutar la aplicación
+├──  musica.db            # Base de Datos
 ├──  musica_api
 │   ├──  __init__.py      # Inicialización del módulo
-│   ├──  api_models.py    # Modelos de API para serialización/deserialización usando Flask-RESTX
-│   ├──  config.py        # Configuraciones para diferentes entornos (desarrollo, pruebas, producción)
-│   ├──  extensions.py    # Definición de Extensiones Flask (API, SQLAlchemy)
-│   ├──  models.py        # Modelos de datos usando SQLAlchemy
-│   └──  resources.py     # Recursos y endpoints de la API
+│   └──  *                # Implementación del API
 ├── 󰌠 requirements.txt     # Dependencias del proyecto
 ├── 󰙨 tests
 │   └──  test_api.py      # Pruebas Unitarias
@@ -87,12 +82,13 @@ lpa2-taller3
 1. Ejecuta la aplicación:
 
    ```bash
-   flask run
+   uvicorn main:app --reload
    ```
 
 2. Accede a la aplicación:
-   - API: [http://127.0.0.1:5000/api/](http://127.0.0.1:5000/api/)
-   - Documentación *Swagger*: [http://127.0.0.1:5000/docs](http://127.0.0.1:5000/docs)
+   - API: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+   - Documentación *Swagger UI*: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+   - Documentación *ReDoc*: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 
 ## Uso de la API
 
@@ -129,11 +125,13 @@ lpa2-taller3
 
 2. Utilizando [DBeaver](https://dbeaver.io/), adiciona 5 usuarios y 10 canciones, directo a las tablas.
 
-3. Busca todos los comentarios `# TODO` y `# FIXME`, realiza los ajustes necesarios, y ejecuta un `commit` por cada uno.
+3. Busca todos los comentarios `# TODO` y `# FIXME`, realiza los ajustes necesarios, y ejecuta un `commit` por cada uno. Usa Pydantic para la validación de datos.
 
-4. Prueba el funcionamiento del API, desde la documentación *Swagger*.
+4. Prueba el funcionamiento del API, desde la documentación *Swagger UI* o *ReDoc*.
 
-5. Implementar una (1) de las sugerencias que se presentan a continuación.
+5. Desarrolla las pruebas automatizadas para verificar el funcionamiento correcto de la API.
+
+6. Implementar dos (2) de las sugerencias que se presentan a continuación.
 
 ## Sugerencias de Mejora
 
@@ -141,19 +139,15 @@ lpa2-taller3
 
 2. **Paginación**: Añadir soporte para paginación en las listas de canciones, usuarios y favoritos para mejorar el rendimiento con grandes volúmenes de datos.
 
-3. **Validación de datos**: Implementar validación más robusta de datos de entrada utilizando bibliotecas como Marshmallow o Pydantic.
+3. **Base de datos en producción**: Migrar a una base de datos más robusta como PostgreSQL o MySQL para entornos de producción.
 
-4. **Tests unitarios e integración**: Desarrollar pruebas automatizadas para verificar el funcionamiento correcto de la API.
+4. **Docker**: Contenerizar la aplicación para facilitar su despliegue en diferentes entornos.
 
-5. **Base de datos en producción**: Migrar a una base de datos más robusta como PostgreSQL o MySQL para entornos de producción.
+5. **Registro (logging)**: Implementar un sistema de registro más completo para monitorear errores y uso de la API.
 
-6. **Docker**: Contenerizar la aplicación para facilitar su despliegue en diferentes entornos.
+6. **Caché**: Añadir caché para mejorar la velocidad de respuesta en consultas frecuentes.
 
-7. **Registro (logging)**: Implementar un sistema de registro más completo para monitorear errores y uso de la API.
+7. **Estadísticas de uso**: Implementar un sistema de seguimiento para analizar qué canciones son más populares y sugerir recomendaciones basadas en preferencias similares.
 
-8. **Caché**: Añadir caché para mejorar la velocidad de respuesta en consultas frecuentes.
-
-9. **Estadísticas de uso**: Implementar un sistema de seguimiento para analizar qué canciones son más populares y sugerir recomendaciones basadas en preferencias similares.
-
-10. **Subida de archivos**: Permitir la subida de archivos de audio y gestionar su almacenamiento en un servicio como S3 o similar.
+8. **Subida de archivos**: Permitir la subida de archivos de audio y gestionar su almacenamiento en un servicio como S3 o similar.
 
